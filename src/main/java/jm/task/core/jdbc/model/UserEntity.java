@@ -1,15 +1,28 @@
 package jm.task.core.jdbc.model;
 
 
+import javax.persistence.*;
+import java.util.Objects;
+
+
+@Entity
+@Table(name= "Users")
 public class UserEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
     private String name;
+
+    @Column
     private String lastName;
+
+    @Column
     private Byte age;
 
     public UserEntity() {
-
     }
 
     public UserEntity(String name, String lastName, Byte age) {
@@ -58,5 +71,18 @@ public class UserEntity {
                 ", lastName='" + lastName + '\'' +
                 ", age=" + age +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserEntity)) return false;
+        UserEntity that = (UserEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(lastName, that.lastName) && Objects.equals(age, that.age);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, lastName, age);
     }
 }
