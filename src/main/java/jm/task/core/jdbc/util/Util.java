@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+
 public class Util {
     private static final String URL = "jdbc:mysql://localhost:3306/mydb";
     private static final String NAME = "root";
@@ -28,7 +29,7 @@ public class Util {
         return connection;
     }
 
-    public static Session getSession() {
+    public static SessionFactory getSession() {
         if (sessionFactory == null) {
             try {
                 Configuration configuration = new Configuration();
@@ -57,6 +58,6 @@ public class Util {
                 e.printStackTrace();
             }
         }
-        return sessionFactory.openSession();
+        return sessionFactory;
     }
 }

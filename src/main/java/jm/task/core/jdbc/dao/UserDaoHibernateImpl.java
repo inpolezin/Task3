@@ -10,55 +10,61 @@ import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
 
-    Transaction transaction;
-
-
+    private Transaction transaction;
+    private final SessionFactory sessionFactory = Util.getSession();
     public UserDaoHibernateImpl() {
-
     }
-
 
     @Override
     public void createUsersTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS Users (id INT NOT NULL AUTO_INCREMENT, " +
-                "name VARCHAR(50), " +
-                "lastname VARCHAR(50), " +
-                "age SMALLINT, " +
-                "PRIMARY KEY (id) )";
-
-        try (Session session = Util.getSession()){
-
+        try (Session session = sessionFactory.openSession()){
             transaction = session.beginTransaction();
-            session.createSQLQuery(sql).executeUpdate();
+            session.createSQLQuery("CREATE TABLE IF NOT EXISTS Users (id INT NOT NULL AUTO_INCREMENT, " +
+                    "name VARCHAR(50), " +
+                    "lastname VARCHAR(50), " +
+                    "age SMALLINT, " +
+                    "PRIMARY KEY (id) )").executeUpdate();
             transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
         }
     }
 
     @Override
     public void dropUsersTable() {
-        String sql = "DROP TABLE IF EXISTS Users";
-
-        try (Session session = Util.getSession()){
-
+        try (Session session = sessionFactory.openSession()){
             transaction = session.beginTransaction();
-            session.createSQLQuery(sql).executeUpdate();
+            session.createSQLQuery("DROP TABLE IF EXISTS Users").executeUpdate();
             transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
         }
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        try (Session session = Util.getSession()){
+        try (Session session = sessionFactory.openSession()){
 
             transaction = session.beginTransaction();
             session.save(new UserEntity(name, lastName, age));
             transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
         }
     }
 
     @Override
     public void removeUserById(long id) {
-        try (Session session = Util.getSession()){
+        try (Session session = sessionFactory.openSession()){
 
             UserEntity user = session.get(UserEntity.class, id);
             transaction = session.beginTransaction();
@@ -66,29 +72,32 @@ public class UserDaoHibernateImpl implements UserDao {
                 session.delete(user);
             }
             transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
         }
     }
 
     @Override
     public List<UserEntity> getAllUsers() {
-        String hql = "FROM UserEntity";
-
-        try (Session session = Util.getSession()){
-
-            return session.createQuery(hql).getResultList();
+        try (Session session = sessionFactory.openSession()){
+            return session.createQuery("FROM UserEntity").getResultList();
         }
     }
 
     @Override
     public void cleanUsersTable() {
-
-        String sql = "TRUNCATE TABLE Users";
-
-        try (Session session = Util.getSession()){
-
+        try (Session session = sessionFactory.openSession()){
             transaction = session.beginTransaction();
-            session.createSQLQuery(sql).executeUpdate();
+            session.createSQLQuery("TRUNCATE TABLE Users").executeUpdate();
             transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
         }
 
     }
