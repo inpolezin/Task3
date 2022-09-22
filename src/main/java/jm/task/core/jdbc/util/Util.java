@@ -7,6 +7,7 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -17,8 +18,20 @@ public class Util {
     private static final String URL = "jdbc:mysql://localhost:3306/mydb";
     private static final String NAME = "root";
     private static final String PASSWORD = "13062001";
-
     private static SessionFactory sessionFactory;
+
+    private static Util util;
+
+    private Util() {
+    }
+
+    public static Util getUtil() {
+        if (util == null) {
+            util = new Util();
+        }
+        return util;
+    }
+
     public static Connection getConnection() {
         Connection connection = null;
         try {
@@ -29,7 +42,7 @@ public class Util {
         return connection;
     }
 
-    public static SessionFactory getSession() {
+    public SessionFactory getSession() {
         if (sessionFactory == null) {
             try {
                 Configuration configuration = new Configuration();

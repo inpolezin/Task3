@@ -1,6 +1,7 @@
 package jm.task.core.jdbc.service;
 
 import jm.task.core.jdbc.model.UserEntity;
+
 import java.util.List;
 
 public interface UserService {
